@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    GPIO/IOToggle/stm32f10x_it.h 
+  * @file    BKP/Tamper/stm32f10x_it.h 
   * @author  MCD Application Team
   * @version V3.6.0
   * @date    20-September-2021
@@ -39,6 +39,7 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-
+void TAMPER_IRQHandler(void);
+					 
 #endif /* __STM32F10x_IT_H */
 

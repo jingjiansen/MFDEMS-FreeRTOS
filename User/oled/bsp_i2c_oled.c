@@ -1,21 +1,3 @@
-/**
-  ******************************************************************************
-  * @file       bsp_i2c_oled.c
-  * @author     embedfire
-  * @version     V1.0
-  * @date        2024
-  * @brief      128*64点阵的OLED显示屏驱动文件，仅适用于SD1306驱动IIC通信方式显示屏
-  ******************************************************************************
-  * @attention
-  *
-  * 实验平台  ：野火 STM32F103C8T6-STM32开发板 
-  * 论坛      ：http://www.firebbs.cn
-  * 官网      ：https://embedfire.com/
-  * 淘宝      ：https://yehuosm.tmall.com/
-  *
-  ******************************************************************************
-  */
-  
 #include "oled/bsp_i2c_oled.h"
 #include "i2c/bsp_i2c.h"
 #include "debug/bsp_debug.h"
@@ -23,11 +5,8 @@
 #include "string.h"
 #include "fonts/bsp_fonts.h"
 
-/**
-  * @brief  检测I2C总线OLED从设备
-  * @param  slave_addr：从设备地址
-  * @retval SUCCESS 存在   ERROR：不存在
-  */
+
+/* 检测IIC总线上的OLED设备 */
 ErrorStatus OLED_CheckDevice(uint8_t slave_addr)
 {
     uint8_t i = 100;
@@ -64,29 +43,21 @@ ErrorStatus OLED_CheckDevice(uint8_t slave_addr)
     }   
 }
 
-/**
-  * @brief  向OLED 单指令/数据写入操作
-  *	@param	cmd： 写指令/数据模式选择
-  *	@param	byte：具体指令/数据
-  * @retval SUCCESS 写入成功   ERROR：写入失败
-  */
+
+/* 向OLED 单指令/数据（1字节）写入操作 */
 ErrorStatus OLED_WriteByte(uint8_t cmd,uint8_t byte)
 {  
     ErrorStatus temp = ERROR;
 
     /* 检测总线是否繁忙和发出开始信号*/
     temp = IIC_Start();
-    if(temp != SUCCESS)
-    {
-        return temp;
-    }
+    if(temp != SUCCESS) return temp;
 
     /* 呼叫从机,地址配对*/
     temp = IIC_AddressMatching(OLED_SLAVER_ARRD,IIC_WRITE);
     if(temp != SUCCESS)
     {
         printf("地址失败");
-        
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -97,7 +68,6 @@ ErrorStatus OLED_WriteByte(uint8_t cmd,uint8_t byte)
     if(temp != SUCCESS)
     {
         printf("写指令/数据失败");
-        
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -118,30 +88,21 @@ ErrorStatus OLED_WriteByte(uint8_t cmd,uint8_t byte)
     return SUCCESS;  
 }
 
-/**
-  * @brief  向OLED 多指令/数据写入操作
-  *	@param	cmd：   写指令/数据模式选择
-  *         buffer：缓冲区指针
-  *		    num：   操作字节数
-  * @retval SUCCESS 写入成功   ERROR：写入失败
-  */
+
+/* 向OLED 多指令/数据（1字节）写入操作 */
 ErrorStatus OLED_WriteBuffer(uint8_t cmd,uint8_t* buffer,uint32_t num)
 {  
     ErrorStatus temp = ERROR;
 
     /* 检测总线是否繁忙和发出开始信号*/
     temp = IIC_Start();
-    if(temp != SUCCESS)
-    {
-        return temp;
-    }
+    if(temp != SUCCESS) return temp;
 
     /* 呼叫从机,地址配对*/
     temp = IIC_AddressMatching(OLED_SLAVER_ARRD,IIC_WRITE);
     if(temp != SUCCESS)
     {
         printf("地址失败");
-        
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -152,7 +113,6 @@ ErrorStatus OLED_WriteBuffer(uint8_t cmd,uint8_t* buffer,uint32_t num)
     if(temp != SUCCESS)
     {
         printf("写指令/数据失败");
-        
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -174,6 +134,7 @@ ErrorStatus OLED_WriteBuffer(uint8_t cmd,uint8_t* buffer,uint32_t num)
     return SUCCESS;  
 }
 
+
 /**
   * @brief  设置光标
   * @param  y：光标y位置以左上角为原点，向下方向的坐标，范围：0~7
@@ -182,18 +143,13 @@ ErrorStatus OLED_WriteBuffer(uint8_t cmd,uint8_t* buffer,uint32_t num)
   */
 void OLED_SetPos(uint8_t y,uint8_t x) //设置起始点像素点坐标
 { 
-    uint8_t data_buffer_temp[] =  {0xB0+y,((x&0xF0)>>4)|0x10,(x&0x0F)|0x00};//{设置Y位置,设置X位置高4位,设置X位置低4位}
-    
+    /* {设置Y位置,设置X位置高4位,设置X位置低4位} */
+    uint8_t data_buffer_temp[] =  {0xB0+y,((x&0xF0)>>4)|0x10,(x&0x0F)|0x00};
     OLED_WriteBuffer(OLED_WR_CMD,data_buffer_temp,OLED_ARRAY_SIZE(data_buffer_temp));
 }
 
 
-
-/**
-  * @brief  填充整个屏幕
-  * @param  fill_data:要填充的数据
-  * @retval 无
-  */
+/* 填充整个屏幕 */
 void OLED_Fill(uint8_t fill_data)
 {
     uint8_t data_buffer_temp[128] = {0};
@@ -207,15 +163,13 @@ void OLED_Fill(uint8_t fill_data)
     
 }
 
-/**
-  * @brief  初始化OLED
-  * @param  无
-  * @retval 无
-  */
+
+/* 初始化OLED */
 void OLED_Init(void)
 {
     IIC_DELAY_US(1000000); // 1s,这里的延时很重要,上电后延时，没有错误的冗余设计
     
+    /* 检测OLED是否存在，已经执行：起始信号发送、从机地址确认、从机应答确认，连接已建立 */
     while(OLED_CheckDevice(OLED_SLAVER_ARRD) == ERROR);
     
     /* 控制显示 */
@@ -283,34 +237,23 @@ void OLED_Init(void)
     OLED_CLS();
 }
 
-/**
-  * @brief  清屏
-  * @param  无
-  * @retval 无
-  */
+
+/* 清屏 */
 void OLED_CLS(void)//清屏
 {
 	OLED_Fill(0x00);
-//    OLED_Fill(0xff);
 }
 
 
-/**
-  * @brief  将OLED从休眠中唤醒
-  * @param  无
-  * @retval 无
-  */
+/* 将OLED从休眠中唤醒 */
 void OLED_ON(void)
 {
     uint8_t data_buffer_temp[] = {0x8D,0x14,0xAF};//{设置电荷泵,开启电荷泵,设置显示打开}
     OLED_WriteBuffer(OLED_WR_CMD,data_buffer_temp,OLED_ARRAY_SIZE(data_buffer_temp));
 }
 
-/**
-  * @brief  让OLED休眠 -- 休眠模式下,OLED功耗不到10uA
-  * @param  无
-  * @retval 无
-  */
+
+/* 让OLED休眠 -- 休眠模式下,OLED功耗不到10uA */
 void OLED_OFF(void)
 {
     uint8_t data_buffer_temp[] = {0x8D,0x10,0xAE};//{设置电荷泵,关闭电荷泵,设置显示关闭}
@@ -324,43 +267,32 @@ void OLED_OFF(void)
   *         x：以左上角为原点，向右方向的坐标，范围：0~127 (每次操作1个像素点)
   *         n:汉字在的索引
   *         data_cn 中文LIB
-  *					
   * @retval 无
   */
 void OLED_ShowChinese(uint8_t y,uint8_t x,uint8_t n,uint8_t *data_cn)
 {
+    /* 一个汉字32个字节：32字节=32*8=256bit，16*16=256 */
     uint32_t addr=32*n;
     
+    /* 填充上半部分 */
     OLED_SetPos(y,x);
-    for(uint8_t i=0;i<16;i++)
-    {
-        OLED_WriteByte(OLED_WR_DATA,data_cn[addr]);
-        addr += 1;
-    }
+    OLED_WriteBuffer(OLED_WR_DATA,data_cn+addr,16);
     
+    /* 填充下半部分（下一PAGE） */
     OLED_SetPos(y+1,x);
-    for(uint8_t i=0;i<16;i++)
-    {
-        OLED_WriteByte(OLED_WR_DATA,data_cn[addr]);
-        addr += 1;
-    }
+    OLED_WriteBuffer(OLED_WR_DATA,data_cn+addr+16,16);
 }
 
-/**
-  * @brief  显示的汉字(大小为F16X16),16*16点阵
-  * @param  line：  以左上角为原点，向下方向的坐标，范围：0~3   (每次操作16个像素点)
-  *         offset：以左上角为原点，向右方向的坐标，范围：0~7   (每次操作16个像素点)
-  *         n:汉字在 chinese_library_16x16 中文LIB的索引
-  *         data_cn 中文LIB	
-  * @retval 无
-  */
-void OLED_ShowChinese_F16X16(uint8_t line,uint8_t offset,uint8_t n)
+
+/* 向指定行（共4行）和列（共8列）显示一个汉字（大小为F16X16） */
+void OLED_ShowChinese_F16X16(uint8_t line, uint8_t offset,uint8_t n)
 {
     OLED_ShowChinese(line*TEXTSIZE_F16X16/8,offset*TEXTSIZE_F16X16, n,(uint8_t *)chinese_library_16x16);
 }
 
+
 /**
-  * @brief  OLED显示一个字符
+  * @brief  OLED显示一个英文字符
   * @param  y：以左上角为原点，向下方向的坐标，范围：0~7   (每次操作8个像素点)
   *         x：以左上角为原点，向右方向的坐标，范围：0~127 (每次操作1个像素点)
   *         char_data 要显示的一个字符，范围：ASCII可见字符
@@ -369,29 +301,28 @@ void OLED_ShowChinese_F16X16(uint8_t line,uint8_t offset,uint8_t n)
   */
 void OLED_ShowChar(uint8_t y, uint8_t x, uint8_t char_data,uint8_t textsize)
 {
-    uint32_t addr = char_data-32;
+    /* 使用字符对应的ASCII码值-32（首个显示字符的偏移量），得到字符在数组中的索引 */
+    uint32_t addr = char_data - 32;
+    
+    // 先设置显示位置
+    OLED_SetPos(y, x);
     
     switch(textsize)
     {
         case TEXTSIZE_F6X8:
-            OLED_SetPos(y,x);
-            for(uint8_t i=0;i<6;i++)
-            {
-                OLED_WriteByte(OLED_WR_DATA,(uint8_t)ascll_code_6x8[addr][i]);
-            }
+            // 一次性发送6字节字体数据
+            OLED_WriteBuffer(OLED_WR_DATA, (uint8_t*)ascll_code_6x8[addr], 6);
             break;
+            
         case TEXTSIZE_F8X16:
-            OLED_SetPos(y,x);
-            for(uint8_t i=0;i<8;i++)
-            {
-                OLED_WriteByte(OLED_WR_DATA,(uint8_t)ascll_code_8x16[addr][i]);
-            }
-            OLED_SetPos(y+1,x);
-            for(uint8_t i=0;i<8;i++)
-            {
-                OLED_WriteByte(OLED_WR_DATA,(uint8_t)ascll_code_8x16[addr][i+8]);
-            }
+            // 上半部分8字节
+            OLED_WriteBuffer(OLED_WR_DATA, (uint8_t*)ascll_code_8x16[addr], 8);
+            // 设置下半部分位置
+            OLED_SetPos(y+1, x);
+            // 下半部分8字节
+            OLED_WriteBuffer(OLED_WR_DATA, (uint8_t*)ascll_code_8x16[addr] + 8, 8);
             break;
+            
         default:
             break;
     }
@@ -422,7 +353,7 @@ void OLED_ShowString(uint8_t y, uint8_t x, uint8_t *string_data,uint8_t textsize
   */
 void OLED_ShowString_F8X16(uint8_t line, uint8_t offset, uint8_t *string_data)
 {
-    OLED_ShowString(line*TEXTSIZE_F8X16/8*2,offset*TEXTSIZE_F8X16,string_data,TEXTSIZE_F8X16);
+    OLED_ShowString(line*TEXTSIZE_F8X16/8*2, offset*TEXTSIZE_F8X16, string_data, TEXTSIZE_F8X16);
 }
 
 /**
@@ -434,28 +365,30 @@ void OLED_ShowString_F8X16(uint8_t line, uint8_t offset, uint8_t *string_data)
   */
 void OLED_DrawBitMap(uint8_t x,uint8_t y,uint8_t x_length,uint8_t y_length,uint8_t *raw)
 {  
-    uint32_t j=0;
-    uint8_t y_page_start;
-    uint8_t x_col_start,x_col_end;
-    uint32_t raw_size=0;
+    uint32_t j=0;                   /* 遍历图片源数组的索引 */
+    uint8_t y_page_start;           /* 起始PAGE */
+    uint8_t x_col_start,x_col_end;  /* 起始列，结束列 */
+    uint32_t raw_size=0;            /* 图片大小（像素数量） */
     
-    /*寻找合适的page进行开始*/
+    /*寻找针对首行合适的page进行开始*/
     if((y+1)%8 !=0 && y != 0 )
     {
+        /* 非首行显示且显示行需要落到下一个PAGE */
         y = (y/8+1)*8;
     }
     y_page_start =  y/8;
     x_col_start  =  x;
     
+    /* 显示范围越界检查 */
     if(y_page_start>7 || x_col_start>127 || y_length>64 || x_length>128)
     {
        return;
     }
     
     /* 计算实际page数 */
-    
     if(y_length%8 != 0)
     {
+        /* 长度不能整PAGE显示，剩余内容需要落到下一个PAGE */
         y_length = y_length/8+1; 
     }
     else
@@ -466,6 +399,7 @@ void OLED_DrawBitMap(uint8_t x,uint8_t y,uint8_t x_length,uint8_t y_length,uint8
     /* 裁剪出范围内的page数 */
     if(y_page_start+y_length>8)
     {
+        /* 计算位图最后落到哪个PAGE，如果越界则裁剪到最后一个PAGE */
         y_length = 8-y_page_start;
     }
     
@@ -475,6 +409,7 @@ void OLED_DrawBitMap(uint8_t x,uint8_t y,uint8_t x_length,uint8_t y_length,uint8
         x_length = 128-x_col_start;
     }
     
+    /* 计算总的像素点 */
     raw_size = x_length * y_length; 
     
     if(raw_size >= 1024)
@@ -482,6 +417,7 @@ void OLED_DrawBitMap(uint8_t x,uint8_t y,uint8_t x_length,uint8_t y_length,uint8
         raw_size =  1024; 
     }
     
+    /* 列的结束 */
     x_col_end = x_col_start+x_length;
     
     for(uint8_t y_temp=y_page_start;;y_temp++)
@@ -491,7 +427,7 @@ void OLED_DrawBitMap(uint8_t x,uint8_t y,uint8_t x_length,uint8_t y_length,uint8
         for(uint8_t x_temp = x_col_start;x_temp<x_col_end;x_temp++)
         {
             OLED_WriteByte(OLED_WR_DATA,(uint8_t)raw[j++]);
-            if(j == raw_size)
+            if(j == raw_size) /* 所有数据已经加载完，跳出循环 */
             {
                 return;
             }

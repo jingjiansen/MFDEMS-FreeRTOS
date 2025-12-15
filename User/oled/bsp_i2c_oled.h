@@ -3,16 +3,16 @@
 
 #include "stm32f10x.h"
 
-#define OLED_SLAVER_ARRD   (0x3C)//OLED屏的地址
+#define OLED_SLAVER_ARRD   (0x3C) /* OLED屏的地址 */
 
-#define OLED_WR_CMD        (0x00)//指令模式
-#define OLED_WR_DATA       (0x40)//数据模式
+#define OLED_WR_CMD        (0x00) /* 指令模式 */
+#define OLED_WR_DATA       (0x40) /* 数据模式 */
 
 #define OLED_ARRAY_SIZE(A) sizeof(A)/sizeof(A[0])  
      
-#define TEXTSIZE_F6X8       6  
-#define TEXTSIZE_F8X16      8  
-#define TEXTSIZE_F16X16     16   
+#define TEXTSIZE_F6X8       6  /* 6x8字体 */
+#define TEXTSIZE_F8X16      8  /* 8x16字体 */
+#define TEXTSIZE_F16X16     16 /* 16x16字体 */
 
 void OLED_Init(void);
 ErrorStatus OLED_CheckDevice(uint8_t slave_addr);

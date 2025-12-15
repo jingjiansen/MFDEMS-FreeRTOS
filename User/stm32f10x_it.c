@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    GPIO/IOToggle/stm32f10x_it.c 
+  * @file    BKP/Tamper/stm32f10x_it.c 
   * @author  MCD Application Team
   * @version V3.6.0
   * @date    20-September-2021
@@ -21,29 +21,23 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-
 #include "stm32f10x_it.h"
+#include "main.h"
+#include "debug/bsp_debug.h"
+#include "systick/bsp_systick.h"
+#include "key/bsp_gpio_key.h"
 
-/* FreeRTOS 头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "semphr.h"
-
-/* 开发板硬件 */
-#include "led/bsp_gpio_led.h"
-#include "key/bsp_gpio_key.h"
-#include "usart/bsp_usart.h"
-
-
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
   */
 
-/** @addtogroup GPIO_IOToggle
+/** @addtogroup BKP_Tamper
   * @{
-  */
+  */ 
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -117,15 +111,14 @@ void UsageFault_Handler(void)
   }
 }
 
-/**
-  * @brief  This function handles SVCall exception.
-  * @param  None
-  * @note   该中断已在FreeRTOS中的port.c中实现，用户无需再实现
-  * @retval None
-  */
-// void SVC_Handler(void)
-// {
-// }
+///**
+//  * @brief  This function handles SVCall exception.
+//  * @param  None
+//  * @retval None
+//  */
+//void SVC_Handler(void)
+//{
+//}
 
 /**
   * @brief  This function handles Debug Monitor exception.
@@ -136,15 +129,32 @@ void DebugMon_Handler(void)
 {
 }
 
+///**
+//  * @brief  This function handles PendSV_Handler exception.
+//  * @param  None
+//  * @retval None
+//  */
+//void PendSV_Handler(void)
+//{
+//}
+
 /**
-  * @brief  This function handles PendSV_Handler exception.
+  * @brief  This function handles SysTick Handler.
   * @param  None
-  * @note   该中断已在FreeRTOS中的port.c中实现，用户无需再实现
   * @retval None
   */
-// void PendSV_Handler(void)
-// {
-// }
+//void SysTick_Handler(void)
+//{
+//    SysTick_CountPlus();
+//    if(dht11_rd_task.timer > 0x00)
+//    {
+//        dht11_rd_task.timer--;
+//        if(dht11_rd_task.timer == 0)
+//        {
+//            dht11_rd_task.flag = 1;
+//        }
+//    }
+//}
 
 /**
   * @brief  该中断负责FreeRTOS的系统时钟，默认1ms中断一次
@@ -166,6 +176,66 @@ void SysTick_Handler(void)
 }
 
 /******************************************************************************/
+/*            STM32F10x Peripherals Interrupt Handlers                        */
+/******************************************************************************/
+
+/**
+  * @brief  This function handles KEY1 interrupt request.
+  * @param  None
+  * @retval None
+  */
+//void KEY1_EXTI_IRQHANDLER(void)
+//{
+//    if(EXTI_GetFlagStatus(KEY1_EXTI_LINE) == SET)
+//    {
+//        left_shift_flag = 1; /* 标记左移 */
+//        menu_show_flag = 1;  /* 标记显示菜单 */
+//        EXTI_ClearITPendingBit(KEY1_EXTI_LINE); /* 清除中断标志位 */
+//    }
+//}
+
+void KEY1_EXTI_IRQHANDLER(void)
+{
+    /* 临界段保护：保存并设置中断掩码后在退出时恢复，作用是防止在ISR内部被更高优先级中断
+       打断，或保护对某些共享寄存器/操作的完整性。注意：如果只使用FromISR API并确保NVIC
+       优先级已配置正确，这个临界段通常不是必须的，过度使用会延长中断响应时间 */
+    uint32_t ulReturn;
+    ulReturn = taskENTER_CRITICAL_FROM_ISR();
+
+    /* 检查是否是KEY1对应的EXTI线发生了中断，作用是在多源共享一个IRQ时判定具体来源 */
+    if(EXTI_GetITStatus(KEY1_EXTI_LINE) == SET)
+    {
+        left_shift_flag = 1; /* 标记左移 */
+        menu_show_flag = 1;  /* 标记显示菜单 */
+        EXTI_ClearITPendingBit(KEY1_EXTI_LINE);
+    }
+    taskEXIT_CRITICAL_FROM_ISR( ulReturn );
+}
+
+void KEY23_EXTI_IRQHANDLER(void)
+{
+    uint32_t ulReturn;
+    ulReturn = taskENTER_CRITICAL_FROM_ISR();
+
+    if(EXTI_GetITStatus(KEY2_EXTI_LINE) == SET)
+    {
+        right_shift_flag = 1; /* 标记右移 */
+        menu_show_flag = 1;   /* 标记显示菜单 */
+        EXTI_ClearITPendingBit(KEY2_EXTI_LINE);
+    }
+
+    if(EXTI_GetITStatus(KEY3_EXTI_LINE) == SET)
+    {
+        enter_flag = 1;      /* 标记确认 */
+        menu_show_flag = 1;  /* 标记显示菜单 */
+        EXTI_ClearITPendingBit(KEY3_EXTI_LINE);
+    }
+
+    taskEXIT_CRITICAL_FROM_ISR( ulReturn );
+}
+
+
+/******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
 /*  available peripheral interrupt handler's name please refer to the startup */
@@ -181,57 +251,11 @@ void SysTick_Handler(void)
 {
 }*/
 
-extern SemaphoreHandle_t BinarySem_Handle;
+/**
+  * @}
+  */ 
 
-extern QueueHandle_t Test_Queue;
-static uint32_t send_data1 = 1;
-static uint32_t send_data2 = 2;
+/**
+  * @}
+  */ 
 
-void KEY1_EXTI_IRQHANDLER(void)
-{
-    /* 视觉反馈：实际应用应当取消以保持ISR短小 */
-    LED_TOGGLE(R_LED_GPIO_PORT, R_LED_GPIO_PIN);
-
-    /* 用于FromISR API返回是否需要做上下文切换 */
-    BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
-
-    /* 临界段保护：保存并设置中断掩码后在退出时恢复，作用是防止在ISR内部被更高优先级中断
-       打断，或保护对某些共享寄存器/操作的完整性。注意：如果只使用FromISR API并确保NVIC
-       优先级已配置正确，这个临界段通常不是必须的，过度使用会延长中断响应时间 */
-    uint32_t ulReturn;
-    ulReturn = taskENTER_CRITICAL_FROM_ISR();
-
-    /* 检查是否是KEY1对应的EXTI线发生了中断，作用是在多源共享一个IRQ时判定具体来源 */
-    if(EXTI_GetITStatus(KEY1_EXTI_LINE) == SET)
-    {
-        /* 将事件（按键编号或数据）放入消息队列，供任务在线程上下文中处理 */
-        xQueueSendFromISR(Test_Queue, &send_data1, &pxHigherPriorityTaskWoken);
-        /* 如果前者唤醒了高优先级任务，则请求PendSV做上下文切换，以便更高优先级任务立即运行 */
-        portYIELD_FROM_ISR( pxHigherPriorityTaskWoken );
-
-        /* 清除EXTI的中断挂起位，防止中断再次被立即触发，必须做的清理步骤 */
-        EXTI_ClearITPendingBit(KEY1_EXTI_LINE);
-    }
-    taskEXIT_CRITICAL_FROM_ISR( ulReturn );
-}
-
-void KEY2_EXTI_IRQHANDLER(void)
-{
-    LED_TOGGLE(G_LED_GPIO_PORT, G_LED_GPIO_PIN);
-
-    BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
-    uint32_t ulReturn;
-
-    ulReturn = taskENTER_CRITICAL_FROM_ISR();
-
-    if(EXTI_GetITStatus(KEY2_EXTI_LINE) == SET)
-    {
-        xQueueSendFromISR(Test_Queue, &send_data2, &pxHigherPriorityTaskWoken);
-
-        portYIELD_FROM_ISR( pxHigherPriorityTaskWoken );
-
-        EXTI_ClearITPendingBit(KEY2_EXTI_LINE);
-    }
-
-    taskEXIT_CRITICAL_FROM_ISR( ulReturn );
-}

@@ -1,5 +1,5 @@
 .\objects\usart_com.o: ..\User\usart\usart_com.c
-.\objects\usart_com.o: ..\User\usart/bsp_usart.h
+.\objects\usart_com.o: ..\User\usart/usart_com.h
 .\objects\usart_com.o: ..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h
 .\objects\usart_com.o: ..\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h
 .\objects\usart_com.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -29,15 +29,5 @@
 .\objects\usart_com.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h
 .\objects\usart_com.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h
 .\objects\usart_com.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h
-.\objects\usart_com.o: ..\FreeRTOS\include\FreeRTOS.h
-.\objects\usart_com.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\usart_com.o: ..\User\FreeRTOSConfig.h
-.\objects\usart_com.o: ..\User\usart/usart_com.h
 .\objects\usart_com.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\usart_com.o: ..\FreeRTOS\include\projdefs.h
-.\objects\usart_com.o: ..\FreeRTOS\include\portable.h
-.\objects\usart_com.o: ..\FreeRTOS\include\deprecated_definitions.h
-.\objects\usart_com.o: ..\FreeRTOS\port\RVDS\ARM_CM3\portmacro.h
-.\objects\usart_com.o: ..\FreeRTOS\include\mpu_wrappers.h
-.\objects\usart_com.o: ..\FreeRTOS\include\semphr.h
-.\objects\usart_com.o: ..\FreeRTOS\include\queue.h
+.\objects\usart_com.o: ..\User\debug/bsp_debug.h

@@ -68,13 +68,22 @@ typedef enum
   */
 
 typedef enum
-{ GPIO_Mode_AIN = 0x0,
+{ 
+  /* 模拟输入（ADC采集） */
+  GPIO_Mode_AIN = 0x0,
+  /* 模拟输入：内部无上拉下拉电阻，引脚电平完全由外部电路决定，容易受到外部干扰 */
   GPIO_Mode_IN_FLOATING = 0x04,
+  /* 下拉输入：内部下拉电阻，默认低电平，外部高电平有效 */
   GPIO_Mode_IPD = 0x28,
+  /* 上拉输入：内部上拉电阻，默认高电平，外部低电平有效 */
   GPIO_Mode_IPU = 0x48,
+  /* 开漏输出：只能输出低电平，高电平由外部上拉电阻拉高（IIC使用） */
   GPIO_Mode_Out_OD = 0x14,
+  /* 推挽输出：能够强力驱动高低电平输出（LED灯） */
   GPIO_Mode_Out_PP = 0x10,
+  /* 复用开漏输出：同开漏输出，但由硬件外设控制 */
   GPIO_Mode_AF_OD = 0x1C,
+  /* 复用推挽输出：同推挽输出，但由硬件外设控制 */
   GPIO_Mode_AF_PP = 0x18
 }GPIOMode_TypeDef;
 

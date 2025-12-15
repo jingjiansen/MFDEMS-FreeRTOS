@@ -31,15 +31,3 @@
 .\objects\bsp_gpio_key.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h
 .\objects\bsp_gpio_key.o: ..\User\systick/bsp_systick.h
 .\objects\bsp_gpio_key.o: ..\User\dwt/bsp_dwt.h
-.\objects\bsp_gpio_key.o: ..\FreeRTOS\include\FreeRTOS.h
-.\objects\bsp_gpio_key.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\bsp_gpio_key.o: ..\User\FreeRTOSConfig.h
-.\objects\bsp_gpio_key.o: ..\User\usart/usart_com.h
-.\objects\bsp_gpio_key.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\bsp_gpio_key.o: ..\FreeRTOS\include\projdefs.h
-.\objects\bsp_gpio_key.o: ..\FreeRTOS\include\portable.h
-.\objects\bsp_gpio_key.o: ..\FreeRTOS\include\deprecated_definitions.h
-.\objects\bsp_gpio_key.o: ..\FreeRTOS\port\RVDS\ARM_CM3\portmacro.h
-.\objects\bsp_gpio_key.o: ..\FreeRTOS\include\mpu_wrappers.h
-.\objects\bsp_gpio_key.o: ..\FreeRTOS\include\task.h
-.\objects\bsp_gpio_key.o: ..\FreeRTOS\include\list.h

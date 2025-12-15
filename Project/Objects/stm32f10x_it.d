@@ -29,6 +29,10 @@
 .\objects\stm32f10x_it.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h
 .\objects\stm32f10x_it.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h
 .\objects\stm32f10x_it.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h
+.\objects\stm32f10x_it.o: ..\User\main.h
+.\objects\stm32f10x_it.o: ..\App\oled/app_oled.h
+.\objects\stm32f10x_it.o: ..\App\dht11/app_dht11.h
+.\objects\stm32f10x_it.o: ..\User\dht11/bsp_dht11.h
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\FreeRTOS.h
 .\objects\stm32f10x_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\objects\stm32f10x_it.o: ..\User\FreeRTOSConfig.h
@@ -39,10 +43,9 @@
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\deprecated_definitions.h
 .\objects\stm32f10x_it.o: ..\FreeRTOS\port\RVDS\ARM_CM3\portmacro.h
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\mpu_wrappers.h
+.\objects\stm32f10x_it.o: ..\FreeRTOS\include\queue.h
+.\objects\stm32f10x_it.o: ..\User\debug/bsp_debug.h
+.\objects\stm32f10x_it.o: ..\User\systick/bsp_systick.h
+.\objects\stm32f10x_it.o: ..\User\key/bsp_gpio_key.h
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\task.h
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\list.h
-.\objects\stm32f10x_it.o: ..\FreeRTOS\include\queue.h
-.\objects\stm32f10x_it.o: ..\FreeRTOS\include\semphr.h
-.\objects\stm32f10x_it.o: ..\User\led/bsp_gpio_led.h
-.\objects\stm32f10x_it.o: ..\User\key/bsp_gpio_key.h
-.\objects\stm32f10x_it.o: ..\User\usart/bsp_usart.h

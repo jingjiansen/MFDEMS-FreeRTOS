@@ -3,8 +3,6 @@
 
 #include "stm32f10x.h"
 
-/* 定义 IIC 连接的GPIO端口, 用户只需要修改下面的代码即可改变控制的 IIC 引脚 */
-
 #define IIC_NUM 1
 
 #if (IIC_NUM == 1)
@@ -37,16 +35,10 @@
 
 #define IIC_SDA_IN()           GPIO_ReadInputDataBit(IIC_SDA_GPIO_PORT,IIC_SDA_GPIO_PIN)  
 
-#define IIC_SCL_OUT(VALUE)     if(VALUE)    GPIO_SetBits(IIC_SCL_GPIO_PORT,IIC_SCL_GPIO_PIN);\
-                               else       GPIO_ResetBits(IIC_SCL_GPIO_PORT,IIC_SCL_GPIO_PIN);
-
-#define IIC_SDA_OUT(VALUE)     if(VALUE)    GPIO_SetBits(IIC_SDA_GPIO_PORT,IIC_SDA_GPIO_PIN);\
-                               else       GPIO_ResetBits(IIC_SDA_GPIO_PORT,IIC_SDA_GPIO_PIN); 
-
 #define IIC_DATA_READ          IIC_SDA_IN() 
 
-//#define IIC_SCL_OUT(VALUE)     (VALUE) ? GPIO_SetBits(IIC_SCL_GPIO_PORT,IIC_SCL_GPIO_PIN):GPIO_ResetBits(IIC_SCL_GPIO_PORT,IIC_SCL_GPIO_PIN)
-//#define IIC_SDA_OUT(VALUE)     (VALUE) ? GPIO_SetBits(IIC_SDA_GPIO_PORT,IIC_SDA_GPIO_PIN):GPIO_ResetBits(IIC_SDA_GPIO_PORT,IIC_SDA_GPIO_PIN)
+#define IIC_SCL_OUT(VALUE)     (VALUE) ? GPIO_SetBits(IIC_SCL_GPIO_PORT,IIC_SCL_GPIO_PIN):GPIO_ResetBits(IIC_SCL_GPIO_PORT,IIC_SCL_GPIO_PIN)
+#define IIC_SDA_OUT(VALUE)     (VALUE) ? GPIO_SetBits(IIC_SDA_GPIO_PORT,IIC_SDA_GPIO_PIN):GPIO_ResetBits(IIC_SDA_GPIO_PORT,IIC_SDA_GPIO_PIN)
 
 
 /* 这个地址只要与外挂的I2C器件地址不一样即可 */

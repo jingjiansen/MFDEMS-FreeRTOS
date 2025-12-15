@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    GPIO/IOToggle/stm32f10x_conf.h 
+  * @file    ADC/ADC1_DMA/stm32f10x_conf.h 
   * @author  MCD Application Team
   * @version V3.6.0
   * @date    20-September-2021

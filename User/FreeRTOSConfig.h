@@ -146,7 +146,7 @@ extern uint32_t SystemCoreClock; /* 系统时钟频率，寻找外部定义，ST
    每当创建任务、队列、互斥量、软件定时器或信号量时，FreeRTOS内核会为这些内核对象分配RAM，
    这里的RAM都属于configTOTAL_HEAP_SIZE指定的内存区。
 */
-#define configTOTAL_HEAP_SIZE		( ( size_t ) ( 16 * 1024 ) )
+#define configTOTAL_HEAP_SIZE		( ( size_t ) ( 8 * 1024 ) )
 
 /*************************************************************************/
 /*************************FreeRTOS钩子函数选项****************************/
