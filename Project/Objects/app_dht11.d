@@ -42,6 +42,8 @@
 .\objects\app_dht11.o: ..\FreeRTOS\include\mpu_wrappers.h
 .\objects\app_dht11.o: ..\FreeRTOS\include\queue.h
 .\objects\app_dht11.o: ..\User\debug/bsp_debug.h
-.\objects\app_dht11.o: ..\App\oled/app_oled.h
+.\objects\app_dht11.o: ..\FreeRTOS\include\semphr.h
 .\objects\app_dht11.o: ..\FreeRTOS\include\task.h
 .\objects\app_dht11.o: ..\FreeRTOS\include\list.h
+.\objects\app_dht11.o: ..\App\oled/app_oled.h
+.\objects\app_dht11.o: ..\User\led/bsp_gpio_led.h

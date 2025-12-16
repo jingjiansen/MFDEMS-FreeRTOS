@@ -45,7 +45,8 @@
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\mpu_wrappers.h
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\queue.h
 .\objects\stm32f10x_it.o: ..\User\debug/bsp_debug.h
-.\objects\stm32f10x_it.o: ..\User\systick/bsp_systick.h
-.\objects\stm32f10x_it.o: ..\User\key/bsp_gpio_key.h
+.\objects\stm32f10x_it.o: ..\FreeRTOS\include\semphr.h
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\task.h
 .\objects\stm32f10x_it.o: ..\FreeRTOS\include\list.h
+.\objects\stm32f10x_it.o: ..\User\systick/bsp_systick.h
+.\objects\stm32f10x_it.o: ..\User\key/bsp_gpio_key.h

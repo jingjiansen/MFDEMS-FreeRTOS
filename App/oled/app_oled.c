@@ -24,7 +24,6 @@ uint8_t right_shift_flag = 0;
 uint8_t enter_flag = 0;
 
 
-
 /* @brief  板级初始化
  * @param  无
  * @retval 无
@@ -36,8 +35,10 @@ void Bsp_Init(void)
     KEY_Init();
     LED_GPIO_Config();
     IIC_Init();
-    DEBUG_USART_Init();
+    UART_Driver_Init();
     DHT11_GPIO_Config();
+
+    uart_printf("Bsp_Init complete.\r\n");
 }
 
 
@@ -59,6 +60,8 @@ void App_Init(void)
     DWT_DelayMs(500);
 
     menu_show_flag = 1;
+
+    uart_printf("App_Init complete.\r\n");
 }
 
 
@@ -90,6 +93,7 @@ void Display_Task(void)
     uint8_t add_flag = 0;
     char str_temp1[128] = {NULL};
 
+    uart_printf("Display task start.\r\n");
 
     while(1)
     {
@@ -298,8 +302,6 @@ void Display_Task(void)
                         /* 非阻塞接收DHT11数据（10ms超时） */
                         if(xQueueReceive(xDht11Queue, &display_data, pdMS_TO_TICKS(10)) == pdTRUE) 
                         {
-                            printf("DHT11数据队列接收成功!\r\n");
-
                             if(display_data.temp_deci&0x80) 
                             {
                                 sprintf(str_temp,"-%d.%d",display_data.temp_int,display_data.temp_deci);
@@ -320,7 +322,7 @@ void Display_Task(void)
                         else 
                         {
                             /* 使用旧值时，即display_data的值不变*/
-                            printf("DHT11数据队列接收失败，使用旧值!\r\n");
+                            // uart_printf("DHT11数据队列接收失败，使用旧值!\r\n");
                         }
 
                         OLED_ShowChinese_F16X16(1,7,14); /* 显示温度单位 */

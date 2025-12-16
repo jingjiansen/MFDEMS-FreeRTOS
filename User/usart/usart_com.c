@@ -53,15 +53,16 @@ void USARTX_SendString(USART_TypeDef *pusartx, char *str)
  */
 int fputc(int ch, FILE *f)
 {
-    /* 等待发送完成 */
-    while (USART_GetFlagStatus(DEBUG_USARTX, USART_FLAG_TC) == RESET);
-    
-    /* 发送一个字节数据到串口 */
-    USART_SendData(DEBUG_USARTX, (uint8_t)ch);
-    
-    /* 等待发送数据寄存器为空 */
-    while (USART_GetFlagStatus(DEBUG_USARTX, USART_FLAG_TXE) == RESET);
+//    /* 等待发送完成 */
+//    while (USART_GetFlagStatus(DEBUG_USARTX, USART_FLAG_TC) == RESET);
 
+//    /* 发送一个字节数据到串口 */
+//    USART_SendData(DEBUG_USARTX, (uint8_t)ch);
+
+//    /* 等待发送数据寄存器为空 */
+//    while (USART_GetFlagStatus(DEBUG_USARTX, USART_FLAG_TXE) == RESET);
+
+    UART_Early_SendByte(&DebugUart, (uint8_t)ch);
     return (ch);
 }
 

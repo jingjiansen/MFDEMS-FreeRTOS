@@ -33,12 +33,12 @@ ErrorStatus OLED_CheckDevice(uint8_t slave_addr)
     
     if((success_num > 90) && (error_num_temp == 1))
     {
-        printf("通信测试正常");
+        // printf("通信测试正常");
         return SUCCESS;
     }
     else
     {
-        printf("通信测试失败");
+        // printf("通信测试失败");
         return ERROR;
     }   
 }
@@ -49,15 +49,16 @@ ErrorStatus OLED_WriteByte(uint8_t cmd,uint8_t byte)
 {  
     ErrorStatus temp = ERROR;
 
-    /* 检测总线是否繁忙和发出开始信号*/
+    /* 检测总线是否繁忙和发出开始信号（内部加锁） */
     temp = IIC_Start();
     if(temp != SUCCESS) return temp;
 
-    /* 呼叫从机,地址配对*/
+    /* 呼叫从机地址配对（如果失败会自动解锁） */
     temp = IIC_AddressMatching(OLED_SLAVER_ARRD,IIC_WRITE);
+
     if(temp != SUCCESS)
     {
-        printf("地址失败");
+        // printf("地址失败");
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -67,7 +68,7 @@ ErrorStatus OLED_WriteByte(uint8_t cmd,uint8_t byte)
     temp = IIC_SendData(cmd);
     if(temp != SUCCESS)
     {
-        printf("写指令/数据失败");
+        // printf("写指令/数据失败");
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -77,7 +78,7 @@ ErrorStatus OLED_WriteByte(uint8_t cmd,uint8_t byte)
     temp = IIC_SendData(byte);
     if(temp != SUCCESS)
     {
-        printf("具体指令/数据失败");
+        // printf("具体指令/数据失败");
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -102,7 +103,7 @@ ErrorStatus OLED_WriteBuffer(uint8_t cmd,uint8_t* buffer,uint32_t num)
     temp = IIC_AddressMatching(OLED_SLAVER_ARRD,IIC_WRITE);
     if(temp != SUCCESS)
     {
-        printf("地址失败");
+        // printf("地址失败");
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -112,7 +113,7 @@ ErrorStatus OLED_WriteBuffer(uint8_t cmd,uint8_t* buffer,uint32_t num)
     temp = IIC_SendData(cmd);
     if(temp != SUCCESS)
     {
-        printf("写指令/数据失败");
+        // printf("写指令/数据失败");
         /* 释放总线并发出停止信号 */
         IIC_Stop();
         return temp;
@@ -124,7 +125,7 @@ ErrorStatus OLED_WriteBuffer(uint8_t cmd,uint8_t* buffer,uint32_t num)
         temp = IIC_SendData(*buffer++);
         if(temp != SUCCESS)
         {
-            printf("具体指令/数据失败");
+            // printf("具体指令/数据失败");
             return ERROR;
         }
     }
@@ -160,7 +161,6 @@ void OLED_Fill(uint8_t fill_data)
         OLED_SetPos(m,0);
         OLED_WriteBuffer(OLED_WR_DATA,data_buffer_temp,OLED_ARRAY_SIZE(data_buffer_temp));
     }
-    
 }
 
 

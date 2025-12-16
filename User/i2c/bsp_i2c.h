@@ -2,6 +2,8 @@
 #define	__BSP_I2C_H
 
 #include "stm32f10x.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 #define IIC_NUM 1
 
@@ -50,11 +52,19 @@
 /*等待超时时间*/
 #define CHECK_TIMES         10
 
+/* IIC获取锁默认超时时间 */
+#define IIC_DEFAULT_TIMEOUT_MS  10
+/* IIC互斥信号量声明 */
+extern SemaphoreHandle_t xIICSemaphore;
+
+
 typedef enum
 {
     IIC_WRITE = 0,
     IIC_READ = 1
 }IIC_Direction_TypeDef;
+
+
 
 void IIC_PinConfig(void);
 void IIC_Init(void);

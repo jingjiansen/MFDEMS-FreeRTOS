@@ -37,9 +37,6 @@
 .\objects\app_oled.o: ..\User\key/bsp_gpio_key.h
 .\objects\app_oled.o: ..\User\led/bsp_gpio_led.h
 .\objects\app_oled.o: ..\User\i2c/bsp_i2c.h
-.\objects\app_oled.o: ..\User\debug/bsp_debug.h
-.\objects\app_oled.o: ..\User\dht11/bsp_dht11.h
-.\objects\app_oled.o: ..\App\dht11/app_dht11.h
 .\objects\app_oled.o: ..\FreeRTOS\include\FreeRTOS.h
 .\objects\app_oled.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\objects\app_oled.o: ..\User\FreeRTOSConfig.h
@@ -49,6 +46,10 @@
 .\objects\app_oled.o: ..\FreeRTOS\include\deprecated_definitions.h
 .\objects\app_oled.o: ..\FreeRTOS\port\RVDS\ARM_CM3\portmacro.h
 .\objects\app_oled.o: ..\FreeRTOS\include\mpu_wrappers.h
+.\objects\app_oled.o: ..\FreeRTOS\include\semphr.h
 .\objects\app_oled.o: ..\FreeRTOS\include\queue.h
+.\objects\app_oled.o: ..\User\debug/bsp_debug.h
 .\objects\app_oled.o: ..\FreeRTOS\include\task.h
 .\objects\app_oled.o: ..\FreeRTOS\include\list.h
+.\objects\app_oled.o: ..\User\dht11/bsp_dht11.h
+.\objects\app_oled.o: ..\App\dht11/app_dht11.h

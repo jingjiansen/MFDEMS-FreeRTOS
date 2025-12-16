@@ -29,4 +29,16 @@
 .\objects\bsp_i2c.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h
 .\objects\bsp_i2c.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h
 .\objects\bsp_i2c.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h
+.\objects\bsp_i2c.o: ..\FreeRTOS\include\FreeRTOS.h
+.\objects\bsp_i2c.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\bsp_i2c.o: ..\User\FreeRTOSConfig.h
+.\objects\bsp_i2c.o: ..\User\usart/usart_com.h
+.\objects\bsp_i2c.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\bsp_i2c.o: ..\FreeRTOS\include\projdefs.h
+.\objects\bsp_i2c.o: ..\FreeRTOS\include\portable.h
+.\objects\bsp_i2c.o: ..\FreeRTOS\include\deprecated_definitions.h
+.\objects\bsp_i2c.o: ..\FreeRTOS\port\RVDS\ARM_CM3\portmacro.h
+.\objects\bsp_i2c.o: ..\FreeRTOS\include\mpu_wrappers.h
+.\objects\bsp_i2c.o: ..\FreeRTOS\include\semphr.h
+.\objects\bsp_i2c.o: ..\FreeRTOS\include\queue.h
 .\objects\bsp_i2c.o: ..\User\dwt/bsp_dwt.h

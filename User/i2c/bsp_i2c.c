@@ -1,6 +1,8 @@
 #include "i2c/bsp_i2c.h"
 #include "dwt/bsp_dwt.h"  
 
+/* IIC互斥信号量定义 */
+SemaphoreHandle_t xIICSemaphore = NULL;
 
 /* 硬件IIC引脚配置 */
 void IIC_PinConfig(void)
@@ -46,7 +48,35 @@ void IIC_Init(void)
     IIC_PinConfig();          /* 配置IIC GPIO引脚 */
     IIC_Mode_Config();        /* 模式配置：I2C模式，占空比2，7位地址，使能ACK，7位地址，通信速率 */
     I2C_Cmd(IIC_I2CX,ENABLE); /* 使能 HARD_IIC */
+
+    /* 创建IIC互斥信号量 */
+    if(xIICSemaphore == NULL)
+    {
+        xIICSemaphore = xSemaphoreCreateMutex();
+        if(xIICSemaphore == NULL)
+        {
+            // printf("IIC semaphore create error!\r\n");
+        }
+    }
 }
+
+/* 获取IIC锁 */
+ErrorStatus IIC_Lock(uint32_t timeout_ms)
+{
+    if(xIICSemaphore == NULL) return ERROR;
+    BaseType_t xSemaphoreTakeStatus = xSemaphoreTake(xIICSemaphore, pdMS_TO_TICKS(timeout_ms));
+    return (xSemaphoreTakeStatus == pdTRUE) ? SUCCESS : ERROR;
+}
+
+/* 释放IIC锁 */
+void IIC_Unlock(void)
+{
+    if(xIICSemaphore != NULL)
+    {
+        xSemaphoreGive(xIICSemaphore);
+    }
+}
+
 
 /*延时接口：用于维持高低电平*/
 void IIC_DELAY_US(uint32_t time)
@@ -57,52 +87,51 @@ void IIC_DELAY_US(uint32_t time)
 
 /* 发送开始信号 */
 ErrorStatus IIC_Start(void)
-{
-    uint32_t check_times = CHECK_TIMES;
-    
-    /* 检测总线是否繁忙 */
-    while(I2C_GetFlagStatus(IIC_I2CX,I2C_FLAG_BUSY))
+{    
+    /* 加锁 */
+    if(IIC_Lock(IIC_DEFAULT_TIMEOUT_MS) == SUCCESS)
     {
-        check_times--;
-        IIC_DELAY_US(1);
-        if(check_times == 0)
-        {
-            return ERROR;
-        }
-    }
-    
-    /* 产生I2C 起始信号*/
-    I2C_GenerateSTART(IIC_I2CX, ENABLE);
-    check_times = CHECK_TIMES;
+        uint32_t check_times = CHECK_TIMES;
 
-    /* 等待主模式选择完成：主模式：开始信号已经发送到总线、硬件确认总线控制权已获得、状态机准备后发送后续命令 */
-    while(I2C_CheckEvent(IIC_I2CX,I2C_EVENT_MASTER_MODE_SELECT) == ERROR)
-    {
-        check_times--;
-        IIC_DELAY_US(1);
-        if(check_times == 0)
+        /* 检测总线是否繁忙 */
+        while(I2C_GetFlagStatus(IIC_I2CX,I2C_FLAG_BUSY))
         {
-            /* 发送停止信号方便下次通信使用*/
-            IIC_Stop();
-            return ERROR;
+            check_times--;
+            IIC_DELAY_US(1);
+            if(check_times == 0)
+            {
+                return ERROR;
+            }
         }
+        
+        /* 产生I2C 起始信号*/
+        I2C_GenerateSTART(IIC_I2CX, ENABLE);
+        check_times = CHECK_TIMES;
+
+        /* 等待主模式选择完成：主模式：开始信号已经发送到总线、硬件确认总线控制权已获得、状态机准备后发送后续命令 */
+        while(I2C_CheckEvent(IIC_I2CX,I2C_EVENT_MASTER_MODE_SELECT) == ERROR)
+        {
+            check_times--;
+            IIC_DELAY_US(1);
+            if(check_times == 0)
+            {
+                /* 发送停止信号方便下次通信使用*/
+                IIC_Stop();
+                return ERROR;
+            }
+        }
+        return SUCCESS;
+        /* 这里不立即解锁是因为后续操作可能需要继续使用IIC总线 */
     }
-    return SUCCESS;
 }
 
 
-/* 发送停止信号 */
-void IIC_Stop(void) 
-{
-    I2C_GenerateSTOP(IIC_I2CX,ENABLE);
-}
-
-
-/* 发送数据 */
+/* 发送数据（无需加锁） */
 ErrorStatus IIC_SendData(uint8_t data)
 {
     uint32_t check_times = CHECK_TIMES;
-    I2C_SendData(IIC_I2CX,data); /* 发送数据 */
+    /* 发送数据 */
+    I2C_SendData(IIC_I2CX,data);
     /* 等待数据发送完成 */   
     while(I2C_CheckEvent(IIC_I2CX,I2C_EVENT_MASTER_BYTE_TRANSMITTED) == ERROR)
     {
@@ -148,7 +177,7 @@ ErrorStatus IIC_AddressMatching(uint8_t slave_addr,IIC_Direction_TypeDef directi
 }
 
 
-/* 检查总线上的从机设备 */
+/* 检查总线上的从机设备（Start加锁，Stop解锁） */
 ErrorStatus IIC_CheckDevice(uint8_t slave_addr)
 {
     ErrorStatus temp = ERROR;
@@ -172,4 +201,13 @@ ErrorStatus IIC_CheckDevice(uint8_t slave_addr)
     return SUCCESS;  
 }
 
+
+/* 发送停止信号 */
+void IIC_Stop(void) 
+{
+    I2C_GenerateSTOP(IIC_I2CX,ENABLE);
+
+    /* 停止信号后解锁IIC总线 */
+    IIC_Unlock();
+}
 /*********************************************END OF FILE**********************/

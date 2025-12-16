@@ -46,5 +46,6 @@
 .\objects\main.o: ..\FreeRTOS\include\task.h
 .\objects\main.o: ..\FreeRTOS\include\list.h
 .\objects\main.o: ..\User\debug/bsp_debug.h
+.\objects\main.o: ..\FreeRTOS\include\semphr.h
 .\objects\main.o: ..\User\led/bsp_gpio_led.h
 .\objects\main.o: ..\User\key/bsp_gpio_key.h

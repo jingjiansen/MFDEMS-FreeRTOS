@@ -19,7 +19,6 @@ int main(void)
     BaseType_t ret1 = pdPASS;
     BaseType_t ret2 = pdPASS;
 
-    
     /* 创建菜单任务 */
     ret1 = xTaskCreate(  (TaskFunction_t) Display_Task,
                             (const char*) "Display_Task",
@@ -39,7 +38,8 @@ int main(void)
 
      if(ret1 == pdPASS && ret2 == pdPASS)
      {
-         vTaskStartScheduler();
+        UART_SwitchToRTOSMode();
+        vTaskStartScheduler();
      }
      
      while(1);              

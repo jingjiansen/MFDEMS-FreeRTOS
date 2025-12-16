@@ -3,6 +3,7 @@
 #include "usart/usart_com.h"
 #include "debug/bsp_debug.h"
 #include "oled/app_oled.h"
+#include "led/bsp_gpio_led.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -14,14 +15,6 @@ void DHT11_Init(void)
 {
     /* 创建数据队列，深度为1，使用覆盖模式 */
     xDht11Queue = xQueueCreate(1,sizeof(DHT11_DATA_TYPEDEF));
-    if(xDht11Queue == NULL) 
-    {
-        printf("dht11 queue create error!\r\n");
-    }
-    else 
-    {
-        printf("dht11 queue create success!\r\n");
-    }
 }
 
 
@@ -32,47 +25,44 @@ void DHT11_Init(void)
  */
 void DHT11_Task(void *pvParameters) 
 {
-
     DHT11_DATA_TYPEDEF last_valid_data = {0};
 
-    printf("dht11 task start!\r\n");
+    uart_printf("DHT11 task start.\r\n");
 
     while(1) 
     {
-
         if(DHT11_ReadData(&last_valid_data) == SUCCESS) 
         {
-            
             /* 发送数据到队列 */
             if(xQueueOverwrite(xDht11Queue, &last_valid_data) == pdTRUE) 
             {
-                // printf("DHT11数据更新：");
+                // uart_printf("DHT11数据更新：");
                 // if(last_valid_data.humi_deci&0x80) 
                 // {
-                //     printf("湿度为 -%d.%d％ＲＨ ",last_valid_data.humi_int,last_valid_data.humi_deci);
+                //     uart_printf("湿度为 -%d.%d％ＲＨ ",last_valid_data.humi_int,last_valid_data.humi_deci);
                 // }
                 // else 
                 // {
-                //     printf("湿度为 %d.%d％ＲＨ ",last_valid_data.humi_int,last_valid_data.humi_deci);
+                //     uart_printf("湿度为 %d.%d％ＲＨ ",last_valid_data.humi_int,last_valid_data.humi_deci);
                 // }
 
                 // if(last_valid_data.temp_deci&0x80) 
                 // {
-                //     printf("温度为 -%d.%d ℃ \r\n",last_valid_data.temp_int,last_valid_data.temp_deci);
+                //     uart_printf("温度为 -%d.%d ℃ \r\n",last_valid_data.temp_int,last_valid_data.temp_deci);
                 // }
                 // else 
                 // {
-                //     printf("温度为 %d.%d ℃ \r\n",last_valid_data.temp_int,last_valid_data.temp_deci);
+                //     uart_printf("温度为 %d.%d ℃ \r\n",last_valid_data.temp_int,last_valid_data.temp_deci);
                 // }
             }
             else 
             {
-                printf("DHT11数据队列发送错误!\r\n");
+                uart_printf("DHT11数据队列发送错误!\r\n");
             }
         }
         else 
         {
-            printf("DHT11数据读取错误!\r\n");
+            uart_printf("DHT11数据读取错误!\r\n");
         }        
         vTaskDelay(500);
     }
