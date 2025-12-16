@@ -1,5 +1,7 @@
 ## 迁移FreeRTOS
 
+本项目是《裸机版裸机版多功能桌面环境监测系统》在FreeRTOS上的实现，旨在巩固学习到的FreeRTOS源码的相关知识。本项目是学习野火《FreeRTOS内核实现与应用开发实战指南》课程的学习成果[视频源址](https://www.bilibili.com/video/BV1Jx411X7NS?spm_id_from=333.788.videopod.episodes&vd_source=eaf8b4b66b7bc2a0cae5103b944514eb)。文中图片和项目部分资料均来源于该视频。
+
 ### 迁移
 
 1. 复制《裸机版多功能桌面环境监测系统》工程；
